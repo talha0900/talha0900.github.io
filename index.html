@@ -1,7 +1,453 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ðŸŽ¬ Movies for Urwa ðŸŽ¬</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) {
+            width: 20px;
+            height: 20px;
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            width: 30px;
+            height: 30px;
+            top: 60%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(3) {
+            width: 15px;
+            height: 15px;
+            top: 80%;
+            left: 10%;
+            animation-delay: 4s;
+        }
+
+        .particle:nth-child(4) {
+            width: 25px;
+            height: 25px;
+            top: 30%;
+            left: 70%;
+            animation-delay: 1s;
+        }
+
+        .particle:nth-child(5) {
+            width: 18px;
+            height: 18px;
+            top: 70%;
+            left: 30%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        header h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin: 0;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 3s ease infinite;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header p {
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 60px 30px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            position: relative;
+            animation: slideInUp 0.8s ease-out both;
+        }
+
+        .movie-card:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .movie-card:hover {
+            transform: translateY(-20px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .movie-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .movie-card:hover::before {
+            opacity: 1;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            margin: 16px;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            border-radius: 16px;
+        }
+
+        .movie-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .movie-card:hover .play-overlay {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .play-overlay::after {
+            content: 'â–¶';
+            font-size: 24px;
+            color: #333;
+            margin-left: 4px;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .movie-card h2 {
+            margin: 0 0 12px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .movie-card p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .movie-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-card a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .movie-card a:hover::before {
+            left: 100%;
+        }
+
+        .movie-card a:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.1rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .movie-grid {
+                grid-template-columns: 1fr;
+                padding: 30px 20px;
+                gap: 20px;
+            }
+            
+            header {
+                padding: 30px 20px;
+            }
+            
+            .movie-card img {
+                height: 300px;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <header>
+        <h1>Movies for Urwa ðŸ¿</h1>
+        <p>Your personal cinematic universe</p>
+    </header>
+
+    <main class="movie-grid">
+        <div class="movie-card">
+            <div class="card-content">
+                <h2>Let Me Eat Your Pancreas 2017</h2>
+                <p>When Haruki, a homeroom teacher, is asked to lead an organization in the library, he finds himself reminiscing his past with Sakura, an old classmate who suffered from a pancreatic disease.</p>
+                <video controls width="100%" poster="movies/letmeeatyourpancreas.webp">
+                    <source src="movies/letmeeatyourpancreas.mp4" type="video/mp4" />
+                    <track src="movies/letmeeatyourpancreas.vtt" kind="subtitles" srclang="en" label="English" default />
+                </video>
+            </div>
+        </div>
+
+       <div class="movie-card">
+            <div class="card-content">
+                <h2>A Whisker Away 2020</h2>
+                <p>The line between human and animal starts to blur when a peculiar girl transforms herself into a cat to gain the attention of her crush.</p>
+                <video controls width="100%" poster="movies/awhiskeraway.jpeg">
+                    <source src="movies/awshikeraway.mp4" type="video/mp4" />
+                     <track src="movies/awhiskeraway.vtt" kind="subtitles" srclang="en" label="English" default />
+                </video>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="card-content">
+                <h2>Violet Evergarden: The Movie</h2>
+                <p>After the aftermath of a war, a young girl who was used as a tool for war learns to properly live. With the scars of burns, she goes back to her past to discover her true feelings towards the Major.</p>
+                <video controls width="100%" poster="movies/violetevergarden.jpg">
+                    <source src="movies/violetevergarden.mp4" type="video/mp4" />
+                     <track src="movies/violetevergarden.vtt" kind="subtitles" srclang="en" label="English" default />
+                </video>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>âœ¨ Crafted with â¤ï¸ for URWA âœ¨</p>
+    </footer>
+
+    <script>
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.classList.remove('loading');
+        });
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.movie-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add hover sound effect simulation
+        document.querySelectorAll('.movie-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+        });
+    </script>
 </body>
 </html>
